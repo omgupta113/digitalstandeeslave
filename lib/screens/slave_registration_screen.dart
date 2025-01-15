@@ -40,6 +40,8 @@ class _SlaveRegistrationScreenState extends State<SlaveRegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
+        child: RotatedBox(
+        quarterTurns: 1,
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Form(
@@ -71,6 +73,6 @@ class _SlaveRegistrationScreenState extends State<SlaveRegistrationScreen> {
           ),
         ),
       ),
-    );
+      ));
   }
 }

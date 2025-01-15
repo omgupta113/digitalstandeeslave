@@ -20,10 +20,7 @@ void main() async {
   );
 
   // Set landscape orientation
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
+
 
   // Set full screen
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);

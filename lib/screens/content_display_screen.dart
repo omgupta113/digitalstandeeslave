@@ -36,7 +36,9 @@ class _ContentDisplayScreenState extends State<ContentDisplayScreen> {
     return Container(
       color: Colors.black,
       child: Center(
-        child: SingleChildScrollView(
+        child:RotatedBox(
+            quarterTurns: 1,
+            child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -124,7 +126,7 @@ class _ContentDisplayScreenState extends State<ContentDisplayScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
 
@@ -242,47 +244,57 @@ class _ContentDisplayScreenState extends State<ContentDisplayScreen> {
         contentType == 'png' ||
         contentType == 'jpg' ||
         contentType == 'jpeg') {
-      return CachedNetworkImage(
+      return RotatedBox(
+          quarterTurns: 1,
+          child: CachedNetworkImage(
         imageUrl: content.url,
         fit: BoxFit.contain,
         placeholder: (context, url) => const Center(
           child: CircularProgressIndicator(),
         ),
         errorWidget: (context, url, error) => const Icon(Icons.error),
-      );
+      ));
     }
 
     if (contentType == 'video' || contentType == 'mp4') {
       if (_videoController != null && _isVideoInitialized) {
-        return AspectRatio(
+        return RotatedBox(
+            quarterTurns: 1,
+            child: AspectRatio(
           aspectRatio: _videoController!.value.aspectRatio,
           child: VideoPlayer(_videoController!),
-        );
+        ));
       }
       return const Center(child: CircularProgressIndicator());
     }
 
     if (contentType == 'pdf') {
-      return SfPdfViewer.network(
+      return RotatedBox(
+          quarterTurns: 1,
+          child: SfPdfViewer.network(
         content.url,
         enableDoubleTapZooming: false,
-      );
+      ));
     }
 
     return Center(
-      child: Text('Unsupported content type: ${content.type}'),
-    );
+      child: RotatedBox(
+        quarterTurns: 1,
+        child: Text('Unsupported content type: ${content.type}'),
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return RotatedBox(
+        quarterTurns: 1,
+        child: WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
         body: _contentList.isEmpty
             ? _buildIdleScreen()
             : _buildContentWidget(_contentList[_currentIndex]),
       ),
-    );
+    ));
   }
 }
