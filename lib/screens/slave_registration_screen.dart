@@ -15,7 +15,7 @@ class _SlaveRegistrationScreenState extends State<SlaveRegistrationScreen> {
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       try {
-        await _slaveService.registerSlaveLocally(_slaveId);
+        await _slaveService.registerSlave(_slaveId);
         await _slaveService.updateStatus(_slaveId, true);
 
         if (mounted) {

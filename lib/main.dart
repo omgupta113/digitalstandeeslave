@@ -24,12 +24,15 @@ void main() async {
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
+
   // Set full screen
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   runApp(SlaveApp());
 }
 
 class SlaveApp extends StatelessWidget {
+  final SlaveService _slaveService = SlaveService();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,9 +41,8 @@ class SlaveApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: FutureBuilder<String?>(
-        future: SharedPreferences.getInstance()
-            .then((prefs) => prefs.getString('slave_id')),
+      home: FutureBuilder<String>(
+        future: _slaveService.getOrCreateSlaveId(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -50,7 +52,9 @@ class SlaveApp extends StatelessWidget {
             return ContentDisplayScreen(slaveId: snapshot.data!);
           }
 
-          return SlaveRegistrationScreen();
+          return Center(
+            child: Text('Error initializing slave device'),
+          );
         },
       ),
     );

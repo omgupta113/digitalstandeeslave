@@ -1,14 +1,49 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/content.dart';
+import 'device_service.dart';
 
 class SlaveService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Register slave ID locally
-  Future<void> registerSlaveLocally(String slaveId) async {
+  // Register slave ID locally and on Firebase
+  Future<void> registerSlave(String slaveId) async {
+    final deviceId = await DeviceService.getDeviceId();
+
+    // Update Firebase
+    await _firestore.collection('slaves').doc(slaveId).set({
+      'deviceId': deviceId,
+      'slaveId': slaveId,
+      'isActive': true,
+      'lastSeen': DateTime.now().toIso8601String(),
+      'createdAt': DateTime.now().toIso8601String(),
+    });
+
+    // Store locally
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('slave_id', slaveId);
+  }
+
+  // Get or create slave ID
+  Future<String> getOrCreateSlaveId() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? storedSlaveId = prefs.getString('slave_id');
+
+    if (storedSlaveId != null) {
+      // Verify if slave ID exists in Firebase
+      final slaveDoc = await _firestore.collection('slaves').doc(storedSlaveId).get();
+      if (slaveDoc.exists) {
+        return storedSlaveId;
+      }
+    }
+
+    // Generate new slave ID based on device ID
+    final deviceId = await DeviceService.getDeviceId();
+    final newSlaveId = DeviceService.generateSlaveId(deviceId);
+
+    // Register the new slave
+    await registerSlave(newSlaveId);
+    return newSlaveId;
   }
 
   // Update slave status
