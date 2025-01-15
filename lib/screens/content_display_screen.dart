@@ -240,61 +240,60 @@ class _ContentDisplayScreenState extends State<ContentDisplayScreen> {
   Widget _buildContentWidget(Content content) {
     String contentType = content.type.toLowerCase();
 
+    Widget contentWidget;
+
     if (contentType == 'image' ||
         contentType == 'png' ||
         contentType == 'jpg' ||
         contentType == 'jpeg') {
-      return RotatedBox(
-          quarterTurns: 1,
-          child: CachedNetworkImage(
+      contentWidget = CachedNetworkImage(
         imageUrl: content.url,
         fit: BoxFit.contain,
         placeholder: (context, url) => const Center(
           child: CircularProgressIndicator(),
         ),
         errorWidget: (context, url, error) => const Icon(Icons.error),
-      ));
-    }
-
-    if (contentType == 'video' || contentType == 'mp4') {
+      );
+    } else if (contentType == 'video' || contentType == 'mp4') {
       if (_videoController != null && _isVideoInitialized) {
-        return RotatedBox(
-            quarterTurns: 1,
-            child: AspectRatio(
+        contentWidget = AspectRatio(
           aspectRatio: _videoController!.value.aspectRatio,
           child: VideoPlayer(_videoController!),
-        ));
+        );
+      } else {
+        contentWidget = const CircularProgressIndicator();
       }
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (contentType == 'pdf') {
-      return RotatedBox(
-          quarterTurns: 1,
-          child: SfPdfViewer.network(
+    } else if (contentType == 'pdf') {
+      contentWidget = SfPdfViewer.network(
         content.url,
         enableDoubleTapZooming: false,
-      ));
+      );
+    } else {
+      contentWidget = Text('Unsupported content type: ${content.type}');
     }
 
     return Center(
       child: RotatedBox(
-        quarterTurns: 1,
-        child: Text('Unsupported content type: ${content.type}'),
-    ));
+        quarterTurns: 2,
+        child: Center(child: contentWidget),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return RotatedBox(
-        quarterTurns: 1,
-        child: WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        body: _contentList.isEmpty
-            ? _buildIdleScreen()
-            : _buildContentWidget(_contentList[_currentIndex]),
+      quarterTurns: 1,
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+          body: Center(
+            child: _contentList.isEmpty
+                ? _buildIdleScreen()
+                : _buildContentWidget(_contentList[_currentIndex]),
+          ),
+        ),
       ),
-    ));
+    );
   }
 }
