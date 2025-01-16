@@ -37,7 +37,7 @@ class _ContentDisplayScreenState extends State<ContentDisplayScreen> {
       color: Colors.black,
       child: Center(
         child:RotatedBox(
-            quarterTurns: 1,
+            quarterTurns: 2,
             child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.all(20),
